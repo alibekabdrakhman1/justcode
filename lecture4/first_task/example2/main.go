@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 var mutex sync.Mutex
@@ -11,6 +12,8 @@ func print(str string) {
 	mutex.Lock()
 	defer mutex.Unlock()
 	fmt.Println(str)
+	time.Sleep(time.Second)
+	fmt.Println(str, "is printed")
 }
 
 func main() {
@@ -30,5 +33,6 @@ func main() {
 		print("JustCode3")
 	}()
 	wg.Wait()
+
 	fmt.Println("Done!!!")
 }
