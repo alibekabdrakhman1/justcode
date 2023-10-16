@@ -23,11 +23,10 @@ func (r *UserRepository) GetAllUsers(c *gin.Context) ([]model.User, error) {
 }
 
 func (r *UserRepository) CreateUser(c *gin.Context, user model.User) (int, error) {
-	id := user.ID
 	if err := r.DB.WithContext(c.Request.Context()).Create(&user).Error; err != nil {
 		return -1, err
 	}
-	return id, nil
+	return user.ID, nil
 }
 
 func (r *UserRepository) GetUser(c *gin.Context, id int) (model.User, error) {

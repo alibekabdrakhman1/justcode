@@ -18,7 +18,7 @@ type Storage struct {
 }
 
 func NewStorage(c *gin.Context) (*Storage, error) {
-	pgUrl := ""
+	pgUrl := "host=localhost port=5432 user=postgres password=qwerty dbname=justcode sslmode=disable"
 	DB, err := postgre.Dial(c, pgUrl)
 	if err != nil {
 		return nil, err
