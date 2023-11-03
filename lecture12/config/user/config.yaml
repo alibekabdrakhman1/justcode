@@ -1,0 +1,11 @@
+HttpServer:
+  Port: 9235
+Database:
+  Main:
+    Host: 'localhost'
+    Port: '5432'
+    User: 'postgres'
+    Password: ''
+    Name: 'justcode'
+    SslMode: 'disable'
+
