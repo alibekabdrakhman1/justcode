@@ -14,13 +14,13 @@ import (
 )
 
 type UserTokenService struct {
-	repository        repository.Repository
+	repository        *repository.Repository
 	jwtSecretKey      string
 	passwordSecretKey string
 	userTransport     *transport.UserTransport
 }
 
-func NewUserTokenService(repo repository.Repository, authConfig config.Auth, userTransport *transport.UserTransport) *UserTokenService {
+func NewUserTokenService(repo *repository.Repository, authConfig config.Auth, userTransport *transport.UserTransport) *UserTokenService {
 	return &UserTokenService{
 		repository:        repo,
 		jwtSecretKey:      authConfig.JwtSecretKey,

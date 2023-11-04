@@ -9,8 +9,8 @@ import (
 )
 
 func dsn(cfg config.Config) string {
-	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=%s",
-		cfg.Database.Host,
+	return fmt.Sprintf("host=%v user=%s password=%s dbname=%s sslmode=%s",
+		cfg.Database.Port,
 		cfg.Database.User,
 		cfg.Database.Password,
 		cfg.Database.Name,

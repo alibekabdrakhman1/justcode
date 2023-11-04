@@ -4,13 +4,12 @@ Auth:
 HttpServer:
   Port: 9233
 Database:
-  Main:
-    Host: 'localhost'
-    Port: '5432'
-    User: 'postgres'
-    Password: ''
-    Name: 'justcode'
-    SslMode: 'disable'
+  Host: 'localhost'
+  Port: '5432'
+  User: 'postgres'
+  Password: ''
+  Name: 'postgres'
+  SslMode: 'disable'
 Transport:
   User:
     Host: http://127.0.0.1:9235

@@ -10,7 +10,7 @@ type Service struct {
 	UserToken IUserTokenService
 }
 
-func NewManager(repo repository.Repository, authConfig config.Auth, userTransport *transport.UserTransport) *Service {
+func NewManager(repo *repository.Repository, authConfig config.Auth, userTransport *transport.UserTransport) *Service {
 	authService := NewUserTokenService(repo, authConfig, userTransport)
 	return &Service{
 		UserToken: authService,
