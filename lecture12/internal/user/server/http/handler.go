@@ -1,8 +1,10 @@
 package http
 
 import (
-	"github.com/alibekabdrakhman/justcode/lecture12/internal/auth/service"
+	"github.com/alibekabdrakhman/justcode/lecture12/internal/user/service"
 	"github.com/labstack/echo/v4"
+	"net/http"
+	"strconv"
 )
 
 type Manager struct {
@@ -14,13 +16,23 @@ type UserHandler struct {
 }
 
 func (h *UserHandler) GetAllUsers(c echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+	users, err := h.Service.User.GetAllUsers(c.Request().Context())
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	return c.JSON(http.StatusOK, users)
 }
 
 func (h *UserHandler) GetUserByID(c echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "error getting id from param")
+	}
+	user, err := h.Service.User.GetUserById(c.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, user)
 }
 
 func NewUserHandler(s *service.Service) *UserHandler {

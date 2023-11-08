@@ -15,3 +15,6 @@ type MyJWTClaims struct {
 	Name string `json:"Name"`
 	*jwt.RegisteredClaims
 }
+type ContextData struct {
+	UserID string
+}

@@ -3,9 +3,10 @@ package http
 import (
 	"context"
 	"fmt"
-	"github.com/alibekabdrakhman/justcode/lecture12/internal/auth/config"
+	"github.com/alibekabdrakhman/justcode/lecture12/internal/user/config"
+	"github.com/alibekabdrakhman/justcode/lecture12/internal/user/server/http/middleware"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	middleware2 "github.com/labstack/echo/v4/middleware"
 	"log"
 	"net/http"
 	"time"
@@ -15,13 +16,15 @@ type Server struct {
 	cfg     *config.Config
 	handler *Manager
 	App     *echo.Echo
+	m       *middleware.JWTAuth
 }
 
-func NewServer(cfg *config.Config, handler *Manager) *Server {
+func NewServer(cfg *config.Config, handler *Manager, jwt *middleware.JWTAuth) *Server {
 
 	return &Server{
 		cfg:     cfg,
 		handler: handler,
+		m:       jwt,
 	}
 }
 
@@ -48,7 +51,7 @@ func (s *Server) StartHTTPServer(ctx context.Context) error {
 
 func (s *Server) BuildEngine() *echo.Echo {
 	e := echo.New()
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	e.Use(middleware2.CORSWithConfig(middleware2.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{"*"},
 	}))

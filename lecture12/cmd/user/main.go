@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/alibekabdrakhman/justcode/lecture12/internal/auth/applicator"
-	"github.com/alibekabdrakhman/justcode/lecture12/internal/auth/config"
+	"github.com/alibekabdrakhman/justcode/lecture12/internal/user/applicator"
+	"github.com/alibekabdrakhman/justcode/lecture12/internal/user/config"
 	"github.com/spf13/viper"
 	"log"
 )

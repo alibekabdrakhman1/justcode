@@ -11,13 +11,15 @@ type UserRepository struct {
 }
 
 func (r *UserRepository) GetAllUsers(ctx context.Context) ([]model.User, error) {
-	//TODO implement me
-	panic("implement me")
+	var resp []model.User
+	err := r.DB.WithContext(ctx).Find(&resp)
+	return resp, err.Error
 }
 
 func (r *UserRepository) GetUserById(ctx context.Context, id int) (model.User, error) {
-	//TODO implement me
-	panic("implement me")
+	var resp model.User
+	err := r.DB.WithContext(ctx).Where("id = ?", id).Find(&resp).Error
+	return resp, err
 }
 
 func NewUserRepository(db *gorm.DB) *UserRepository {

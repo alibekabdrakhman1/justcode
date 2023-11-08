@@ -19,7 +19,7 @@ func dsn(cfg config.Config) string {
 }
 
 type Repository struct {
-	UserToken IUserRepository
+	User IUserRepository
 }
 type IUserRepository interface {
 	GetAllUsers(ctx context.Context) ([]model.User, error)
@@ -32,5 +32,5 @@ func NewRepository(ctx context.Context, cfg *config.Config) (*Repository, error)
 		return nil, err
 	}
 	userToken := postgre.NewUserRepository(DB)
-	return &Repository{UserToken: userToken}, nil
+	return &Repository{User: userToken}, nil
 }

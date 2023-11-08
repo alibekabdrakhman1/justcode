@@ -4,75 +4,62 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/alibekabdrakhman/justcode/lecture12/internal/user/config"
+	"github.com/alibekabdrakhman/justcode/lecture12/internal/user/model"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/labstack/echo/v4"
 	"net/http"
-	"service/internal/gallery/auth"
 	"strings"
 )
 
-const (
-	AuthorizationHeaderKey = "Authorization"
-)
-
-type JwtV1 struct {
-	authService auth.UseCase
+type JWTAuth struct {
+	jwtKey []byte
 }
 
-func NewJwtV1Middleware(authService auth.UseCase, logger *zap.SugaredLogger) *JwtV1 {
-	return &JwtV1{
-		authService: authService,
-		logger:      logger,
+func NewJWTAuth(cfg *config.Config) *JWTAuth {
+	return &JWTAuth{jwtKey: []byte(cfg.Auth.JwtSecretKey)}
+}
+
+func (m *JWTAuth) ValidateToken(signedToken string) (*model.MyJWTClaims, error) {
+	token, err := jwt.ParseWithClaims(
+		signedToken,
+		&model.MyJWTClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			return m.jwtKey, nil
+		})
+	if err != nil {
+		return nil, err
 	}
+	claims, ok := token.Claims.(*model.MyJWTClaims)
+	if !ok {
+		return nil, errors.New("couldn't parse claims")
+	}
+
+	return claims, nil
 }
 
-func (j *JwtV1) AuthV1(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if _, ok := r.Header[AuthorizationHeaderKey]; !ok {
-			j.logger.Warn("'Authorization' key missing from headers")
+func (m *JWTAuth) ValidateAuth(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := extractToken(c.Request())
 
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
+		claims, err := m.ValidateToken(token)
+		fmt.Println(claims, err)
 
-		jwtToken, ok := j.getTokenFromHeader(r)
-		if !ok {
-			j.logger.Warn(fmt.Sprintf(
-				"failed to getTokenFromHeader invalidToken: %s",
-				r.Header.Get(AuthorizationHeaderKey),
-			))
-
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		authService := j.authService
-
-		contextUser, err := authService.GetJwtUser(jwtToken)
 		if err != nil {
-			if !errors.Is(err, auth.ErrExpiredToken) {
-				j.logger.Errorf("failed to GetJwtUser err: %v", err)
-			}
-
-			w.WriteHeader(http.StatusUnauthorized)
-		} else {
-			newCtx := context.WithValue(r.Context(), authService.GetContextUserKey(), contextUser)
-			next.ServeHTTP(w, r.WithContext(newCtx))
+			return echo.NewHTTPError(http.StatusForbidden, err.Error())
 		}
-	})
+		ctx := context.WithValue(c.Request().Context(), model.ContextData{}, claims.Id)
+		c.SetRequest(c.Request().WithContext(ctx))
+
+		return next(c)
+	}
 }
 
-func (j *JwtV1) getTokenFromHeader(r *http.Request) (string, bool) {
-	bearer := r.Header.Get(AuthorizationHeaderKey)
-	if len(bearer) > 7 && strings.ToUpper(bearer[0:6]) == "BEARER" {
-		return bearer[7:], true
+func extractToken(r *http.Request) string {
+	bearToken := r.Header.Get("Authorization")
+	strArr := strings.Split(bearToken, " ")
+	if len(strArr) == 2 {
+		return strArr[1]
 	}
-
-	return "", false
-}
-
-func GetContextUser(ctx context.Context) (*auth.ContextUser, error) {
-	if user, ok := ctx.Value(auth.ContextUserKey{}).(*auth.ContextUser); ok {
-		return user, nil
-	}
-
-	return nil, errors.New("could not find user by contextUserKey{}")
+	return ""
 }
