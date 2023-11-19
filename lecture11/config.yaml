@@ -1,0 +1,6 @@
+HttpServer:
+  Port: 9233
+  ShutdownTimeout: 2m
+Postgres:
+  Port: 5432
+  DBName: "postgres"
