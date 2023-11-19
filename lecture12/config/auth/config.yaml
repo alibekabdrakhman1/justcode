@@ -1,0 +1,16 @@
+Auth:
+  JwtSecretKey: "JwtKey"
+  PasswordSecretKey: "lakjdlajsdladandal"
+HttpServer:
+  Port: 9233
+Database:
+  Host: 'localhost'
+  Port: '5432'
+  User: 'postgres'
+  Password: 'qwerty'
+  Name: 'postgres'
+  SslMode: 'disable'
+Transport:
+  User:
+    Host: http://127.0.0.1:9235
+    Timeout: 5s
