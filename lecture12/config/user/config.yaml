@@ -1,0 +1,11 @@
+Auth:
+  JwtSecretKey: "JwtKey"
+HttpServer:
+  Port: 9235
+Database:
+  Host: 'localhost'
+  Port: '5432'
+  User: 'postgres'
+  Password: 'qwerty'
+  Name: 'postgres'
+  SslMode: 'disable'
